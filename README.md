@@ -8,16 +8,16 @@ Planeamiento de rutas para el transporte de un sistema logístico
 conda install -c anaconda django
 # django con pip
 pip install django
-##
-# crispy-forms
+
+## crispy-forms
 pip install --user django-crispy-forms
-# folium
+## folium
 pip install folium
-# folium
+## geocoder
 pip install geocoder
-# geopandas
+## geopandas
 conda install geopandas
-# goevoronoi
+## goevoronoi
 pip install geovoronoi
 ```
 
