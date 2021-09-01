@@ -1,7 +1,7 @@
 # transport_path_planning
-Path planning for transportation in a logistics system
+Planeamiento de rutas para el transporte de un sistema logístico
 
-# Librerias
+# Librerias usadas
 ```bash
 ## django
 # django con conda (recomendado)
@@ -22,8 +22,8 @@ pip install geovoronoi
 ```
 
 # Como usar
-Para clonar y correr este repositorio necesitarás: <br>
-- Git, Python y Django<br>
+Para clonar y correr este repositorio necesitarás: Git, Python y Django<br>
+Es recomendable usar anaconda <br>
 
 Desde tu linea de comandos:<br>
 ```bash
