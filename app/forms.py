@@ -1,14 +1,19 @@
 from typing import Type
 from django import forms
 from django.forms.widgets import NumberInput
-from .models import Search
+from .models import Bodega, Tienda
 
+class BodegaForm(forms.ModelForm):
+    address = forms.CharField(label='')
+    latitud = forms.CharField(label='')
 
-class SearchForm(forms.ModelForm):
-    lat = forms.FloatField(label="", widget=forms.TextInput(attrs={'placeholder': 'latitud'}))
-    lng = forms.FloatField(label="", widget=forms.TextInput(attrs={'placeholder': 'longitud'}))
+    class Meta:
+        model = Bodega
+        fields = ['latitud','address',]
+
+class TiendaForm(forms.ModelForm):
     address = forms.CharField(label='')
 
     class Meta:
-        model = Search
-        fields = ['lat', 'lng', 'address',]
+        model = Tienda
+        fields = ['address',]
