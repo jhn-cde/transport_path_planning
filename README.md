@@ -1,8 +1,30 @@
 # transport_path_planning
-Path planning for transportation in a logistics system
+Planeamiento de rutas para el transporte de un sistema logístico
+
+# Librerias usadas
+```bash
+## django
+# django con conda (recomendado)
+conda install -c anaconda django
+# django con pip
+pip install django
+
+## crispy-forms
+pip install --user django-crispy-forms
+## folium
+pip install folium
+## geocoder
+pip install geocoder
+## geopandas
+conda install geopandas
+## goevoronoi
+pip install geovoronoi
+```
 
 # Como usar
-Para clonar y correr este repositorio necesitarás Git, Python y Django instalados en tu computador <br>
+Para clonar y correr este repositorio necesitarás: Git, Python y Django<br>
+Es recomendable usar anaconda <br>
+
 Desde tu linea de comandos:<br>
 ```bash
 # Clona este repositorio
