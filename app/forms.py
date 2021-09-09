@@ -5,11 +5,10 @@ from .models import Bodega, Tienda
 
 class BodegaForm(forms.ModelForm):
     address = forms.CharField(label='')
-    latitud = forms.CharField(label='')
 
     class Meta:
         model = Bodega
-        fields = ['latitud','address',]
+        fields = ['address',]
 
 class TiendaForm(forms.ModelForm):
     address = forms.CharField(label='')

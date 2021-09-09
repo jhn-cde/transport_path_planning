@@ -1,6 +1,40 @@
 body{
     background-color: rgb(255, 255, 255);
+    width: 100%;
+}
+.col, .col-auto, .row{
+    padding: 0;
+    margin: 0;
 }
 h1{
-    color: white;
+    color: #680D0F;
+    padding: 0 15px;
+}
+.col_lateral{
+    border-right: 1px solid #680D0F;
+    width: 150px;
+}
+.row_logo_unsaac{
+    margin: auto;
+    width: auto;
+}
+.icon-bar {
+    width: auto;
+    background-color: rgb(202, 2, 2);
+}
+.icon-bar a {
+    display: block;
+    text-align: center;
+    padding: 16px;
+    transition: all 0.3s ease;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 44px;
+}
+
+.icon-bar a:hover {
+    background-color: #680D0F;
+}
+
+.active {
+    background-color: #680D0F;
 }
