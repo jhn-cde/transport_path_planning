@@ -28,7 +28,7 @@
                 <div class="row row_icon_bar">
                     <div class="col">
                         <div class="icon-bar">
-                            <a href="#"><i>
+                            <a href="/bodegas/"><i>
                                 <span class="fa-stack">
                                     <!-- The icon that will wrap the number -->
                                     <span class="fa fa-circle-o fa-stack-2x"></span>
@@ -48,7 +48,7 @@
                                     </strong>
                                 </span>
                             </i></a> 
-                            <a href="/resultado/"><i>
+                            <a href="#"><i>
                                 <span class="fa-stack">
                                     <!-- The icon that will wrap the number -->
                                     <span class="fa fa-circle-o fa-stack-2x"></span>
@@ -69,20 +69,9 @@
                 <!--Navbar-->
                 <nav class="navbar navbar-expand-lg navbar-light">
                     <div class="col col_titulo">
-                        <h1 class="">BODEGAS</h1>
+                        <h1 class="">RUTAS OBTENIDAS</h1>
                     </div>
-                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                        <ul class="navbar-nav mr-auto">
-                            <!--li class="nav-item active">
-                                <a class="nav-link" href="{% url 'app:bodegas' %}">Map <span class="sr-only">(current)</span></a>
-                            </li-->
-                        </ul>
-                        <form class="form-inline my-2 my-lg-0" action="{% url 'app:bodegas' %}" method="POST">
-                            {% csrf_token %}
-                            {{ form|crispy }}
-                            <button class="btn btn-outline-success my-2 my-sm-0 mx-3" type="submit">Añadir</button>
-                        </form>
-                    </div>
+                    
                 </nav>
                 <!--End Navbar-->
                 <div class="container">
