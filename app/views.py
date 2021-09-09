@@ -12,7 +12,42 @@ def index(request):
     return render(request, "app/index.html")
 
 def tiendas(request):
-    return render(request, "tiendas/index.html")
+    # Create Map Object
+    m = folium.Map(location=[-13.5252062,-71.9686264], zoom_start=13)
+
+    # verificar si formulario fue completado
+    if request.method == 'POST':
+        form = TiendaForm(request.POST)
+        # verficar validez de datos
+        if form.is_valid():
+            form.save()
+            return redirect('./')
+    #
+    else:
+        form = TiendaForm()
+    # obtener direcciones
+    address_set = Tienda.objects.all()
+    for address in address_set:
+        #if(address != None):
+        location = geocoder.osm(address)
+        lat = location.lat
+        lng = location.lng
+        name = address.address
+        if lat == None or lng == None:
+            address.delete()
+            return HttpResponse('You address input is invalid')
+        folium.Marker([lat, lng], tooltip='Click for more',
+                  popup=name).add_to(m)
+    
+    # Get HTML Representation of Map Object
+    m = m._repr_html_()
+    context = {
+        'm': m,
+        'form': form,
+        
+    }
+    return render(request, 'tiendas/index.html', context)
+    
 
 def bodegas(request):
     # Create Map Object
@@ -47,7 +82,17 @@ def bodegas(request):
     context = {
         'm': m,
         'form': form,
-        'lat': lat,
-        'lng': lng,
     }
     return render(request, 'bodegas/index.html', context)
+def resultado(request):
+    # Create Map Object
+    m = folium.Map(location=[-13.5252062,-71.9686264], zoom_start=13)
+
+    
+    # Get HTML Representation of Map Object
+    m = m._repr_html_()
+    context = {
+        'm': m,
+        
+    }
+    return render(request, "resultado/index.html",context)
