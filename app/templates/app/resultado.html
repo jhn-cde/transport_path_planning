@@ -1,0 +1,41 @@
+{% extends 'app/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block extend_head %}
+    <script src='https://www.google.com/recaptcha/api.js?render={{recaptcha_site_key}}'></script>
+    <link rel="stylesheet" type="text/css" href="../../static/app/style.css">
+    <title>Resultado</title>
+{% endblock %}
+
+{% block extend_nav %} 
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col col_titulo">
+            <h1 class="">Ruta</h1>
+        </div>
+        <div class="col-auto" id="ruta_name">
+
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="map-container">
+            <div id="map-markers">
+                
+            </div>
+         </div>
+    </div>
+{% endblock %}
+
+
+{% block extend_footer %}
+    <script type="text/javascript">
+        var google_api_key = "{{google_api_key|safe}}";
+        var rutas_list = "{{rutas_list|safe}}"
+    </script>
+    <script src="{% static 'google_maps.js' %}"></script>
+{% endblock %}

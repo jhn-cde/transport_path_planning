@@ -1,98 +1,103 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
+from django.conf import settings
 from numpy import add
 from .models import Bodega, Tienda
-from .forms import BodegaForm, TiendaForm
-import folium
-import geocoder
+from urllib.parse import urlencode
+from .mixins import Directions, Markers
+from .utils.voronoi import DiagramaVoronoi
+from .utils.DistanciaMinima import MinDistancia
+import requests
 
+from .mixins import Directions
 # Create your views here.
 
 def index(request):
     return render(request, "app/index.html")
 
 def tiendas(request):
-    # Create Map Object
-    m = folium.Map(location=[-13.5252062,-71.9686264], zoom_start=13)
-
     # verificar si formulario fue completado
     if request.method == 'POST':
-        form = TiendaForm(request.POST)
-        # verficar validez de datos
-        if form.is_valid():
-            form.save()
-            return redirect('./')
-    #
-    else:
-        form = TiendaForm()
+        address = request.POST['google_address']
+        latlng = getlatlng(address, settings.GOOGLE_API_KEY)
+        miAlamacen = Tienda()
+        miAlamacen.address = address
+        miAlamacen.lat = latlng['lat']
+        miAlamacen.lng = latlng['lng']
+        miAlamacen.save()
+        return redirect('./')
+    
     # obtener direcciones
-    address_set = Tienda.objects.all()
-    for address in address_set:
-        #if(address != None):
-        location = geocoder.osm(address)
-        lat = location.lat
-        lng = location.lng
-        name = address.address
-        if lat == None or lng == None:
-            address.delete()
-            return HttpResponse('You address input is invalid')
-        folium.Marker([lat, lng], tooltip='Click for more',
-                  popup=name).add_to(m)
-    
-    # Get HTML Representation of Map Object
-    m = m._repr_html_()
+    address_list = Markers(Tienda.objects.all())
     context = {
-        'm': m,
-        'form': form,
-        
+        'address_list': address_list,
+        "google_api_key": settings.GOOGLE_API_KEY,
     }
-    return render(request, 'tiendas/index.html', context)
+    return render(request, 'app/tiendas.html', context)
     
-
 def bodegas(request):
-    # Create Map Object
-    m = folium.Map(location=[-13.5252062,-71.9686264], zoom_start=13)
-
     # verificar si formulario fue completado
     if request.method == 'POST':
-        form = BodegaForm(request.POST)
-        # verficar validez de datos
-        if form.is_valid():
-            form.save()
-            return redirect('./')
-    #
-    else:
-        form = BodegaForm()
+        address = request.POST['google_address']
+        latlng = getlatlng(address, settings.GOOGLE_API_KEY)
+        miAlamacen = Bodega()
+        miAlamacen.address = address
+        miAlamacen.lat = latlng['lat']
+        miAlamacen.lng = latlng['lng']
+        miAlamacen.save()
+        return redirect('./')
+    
     # obtener direcciones
-    address_set = Bodega.objects.all()
-    for address in address_set:
-        #if(address != None):
-        location = geocoder.osm(address)
-        lat = location.lat
-        lng = location.lng
-        name = address.address
-        if lat == None or lng == None:
-            address.delete()
-            return HttpResponse('You address input is invalid')
-        folium.Marker([lat, lng], tooltip='Click for more',
-                  popup=name).add_to(m)
-    
-    # Get HTML Representation of Map Object
-    m = m._repr_html_()
+    address_list = Markers(Bodega.objects.all())
     context = {
-        'm': m,
-        'form': form,
+        'address_list': address_list,
+        "google_api_key": settings.GOOGLE_API_KEY,
     }
-    return render(request, 'bodegas/index.html', context)
-def resultado(request):
-    # Create Map Object
-    m = folium.Map(location=[-13.5252062,-71.9686264], zoom_start=13)
+    return render(request, 'app/bodegas.html', context)
 
+def resultado(request):
+    d_almacenes = dict()
+    for bodega in Bodega.objects.all():
+        d_almacenes[bodega.address] = [bodega.lng, bodega.lat]
+    if(len(d_almacenes) < 3):
+        return bodegas(request)
+
+    d_tiendas = dict()
+    for tienda in Tienda.objects.all():
+        d_tiendas[tienda.address] = [tienda.lng, tienda.lat]
+    if(len(d_tiendas) == 0):
+        return tiendas(request)
+
+    diagramas_voronoi = DiagramaVoronoi(d_almacenes)
+    #print(d_almacenes)
+    rutas = []
+    for alm in diagramas_voronoi.region_pts.keys():
+        tiendas_por_region = diagramas_voronoi.puntos_por_region(d_tiendas, alm)
+        ruta = [tiendas_por_region[0].replace(", ", "@")]
+        ruta += [tiendas_por_region[i].replace(", ", "@") for i in range(1, len(tiendas_por_region))]
+        rutas.append('()'.join(ruta))
     
-    # Get HTML Representation of Map Object
-    m = m._repr_html_()
+    print(rutas)
     context = {
-        'm': m,
-        
+        'rutas_list': rutas,
+        "google_api_key": settings.GOOGLE_API_KEY,
     }
-    return render(request, "resultado/index.html",context)
+    return render(request, "app/resultado.html", context)
+
+
+def getlatlng(address, GOOGLE_API_KEY):
+    data_type = 'json'
+    endpoint = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/{data_type}"
+    params = {"input":address.replace(', ', ',+'),
+        "inputtype":"textquery", "fields":"formatted_address,name,rating,opening_hours,geometry",
+        "key":GOOGLE_API_KEY}
+    url_params = urlencode(params)
+
+    url = f"{endpoint}?{url_params}"
+
+    payload={}
+    headers = {}
+    response = requests.request("GET", url, headers=headers, data=payload)
+    if response.status_code not in range(200, 299):
+        return {}
+    return(response.json()['candidates'][0]["geometry"]['location'])

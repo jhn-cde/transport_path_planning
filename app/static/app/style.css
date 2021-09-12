@@ -38,3 +38,6 @@ h1{
 .active {
     background-color: #680D0F;
 }
+#id-google-address{
+    width: 400px;
+}

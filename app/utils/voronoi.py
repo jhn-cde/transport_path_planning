@@ -25,7 +25,7 @@ class DiagramaVoronoi():
 
   def obtener_coords(self, puntos):
     # Preparar puntos
-    df = pd.DataFrame({'lng':[v[0] for k,v in puntos.items()], 'lat':[v[1] for k,v in self.puntos.items()]})
+    df = pd.DataFrame({'lng':[v[0] for k,v in puntos.items()], 'lat':[v[1] for k,v in puntos.items()]})
     geo_puntos = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lng, df.lat))
     geo_puntos.crs = "EPSG:4326"
     
@@ -38,7 +38,7 @@ class DiagramaVoronoi():
 
   def obtener_poligonos(self):
     # importar poligonos
-    distritos = gpd.read_file('distritos/DISTRITOS.shp')
+    distritos = gpd.read_file('app/utils/distritos/DISTRITOS.shp')
     # separar distritos de Cusco
     for_drop = [i for i in range(1873)] # nro distritos en Perú
     for_drop.pop(535) # santiago
