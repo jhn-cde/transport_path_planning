@@ -1,0 +1,49 @@
+{% extends 'app/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block extend_head %}
+    <script src='https://www.google.com/recaptcha/api.js?render={{recaptcha_site_key}}'></script>
+    <link rel="stylesheet" type="text/css" href="../../static/app/style.css">
+    <title>Tiendas</title>
+{% endblock %}
+
+{% block extend_nav %} 
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <div class="col col_titulo">
+            <h1 class="">Tiendas</h1>
+        </div>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+            </ul>
+            <form class="form-inline" action="{% url 'app:tiendas' %}" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <input type="text" placeholder="*Ingresa una dirección" class="form-control" id="id-google-address" name="google_address">
+                </div>
+                <button class="btn btn-outline-primary my-2 my-sm-0 mx-3" type="submit"> Añadir </button>
+            </form>
+        </div>
+    </nav>
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="map-container">
+            <div id="map-markers">
+                
+            </div>
+         </div>
+    </div>
+{% endblock %}
+
+
+{% block extend_footer %}
+    <script type="text/javascript">
+        var google_api_key = "{{google_api_key|safe}}";
+        var address_list = "{{address_list|safe}}"
+    </script>
+    <script src="{% static 'google_places.js' %}"></script>
+{% endblock %}
