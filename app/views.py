@@ -77,7 +77,6 @@ def resultado(request):
         ruta += [tiendas_por_region[i].replace(", ", "@") for i in range(1, len(tiendas_por_region))]
         rutas.append('()'.join(ruta))
     
-    print(rutas)
     context = {
         'rutas_list': rutas,
         "google_api_key": settings.GOOGLE_API_KEY,
