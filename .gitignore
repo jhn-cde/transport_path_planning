@@ -16,4 +16,4 @@ tests/coverage_html/
 tests/.coverage
 build/
 tests/report/
-transport_path_planning/settings.py
+transport_path_planning/api_key.py
