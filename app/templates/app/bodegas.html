@@ -44,6 +44,7 @@
     <script type="text/javascript">
         var google_api_key = "{{google_api_key|safe}}";
         var address_list = "{{address_list|safe}}"
+        var geojson = JSON.parse("{% static 'regiones.geojson' %}");
     </script>
     <script src="{% static 'google_places.js' %}"></script>
 {% endblock %}
