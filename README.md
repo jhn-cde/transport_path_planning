@@ -11,10 +11,8 @@ pip install django
 
 ## crispy-forms
 pip install --user django-crispy-forms
-## folium
-pip install folium
-## geocoder
-pip install geocoder
+## geojson
+pip install django-geojson
 ## geopandas
 conda install geopandas
 ## goevoronoi

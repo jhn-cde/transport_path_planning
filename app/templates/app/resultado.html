@@ -38,6 +38,10 @@
     <script type="text/javascript">
         var google_api_key = "{{google_api_key|safe}}";
         var rutas_list = "{{rutas_list|safe}}"
+        var ser = "{{ ser|escapejs }}";
+        var almacenes_list = "{{almacenes_list|safe}}"
+        var tiendas_list = "{{tiendas_list|safe}}"
+
     </script>
     <script src="{% static 'google_maps.js' %}"></script>
 {% endblock %}

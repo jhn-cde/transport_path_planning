@@ -1,5 +1,6 @@
+from ctypes import addressof
 from django.db import models
-
+from djgeojson.fields import PolygonField, PointField
 # Create your models here.
 
 
@@ -12,6 +13,12 @@ from django.db import models
     def __str__(self):
         return self.address
 """
+class Address(models.Model):
+    geom = PointField()
+
+class PolygonLayer(models.Model):
+    geom = PolygonField()
+    
 class Bodega(models.Model):
     address = models.CharField(max_length=200, null=True)
     lat = models.FloatField(null=True)

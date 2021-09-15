@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from numpy import add
-from .models import Bodega, Tienda
+from .models import Bodega, Tienda, PolygonLayer, Address
 from urllib.parse import urlencode
 from .mixins import Directions, Markers
 from .utils.voronoi import DiagramaVoronoi
 from .utils.DistanciaMinima import MinDistancia
 import requests
+from djgeojson.serializers import Serializer as GeoJSONSerializer
 
 from .mixins import Directions
 # Create your views here.
@@ -69,19 +70,31 @@ def resultado(request):
         return tiendas(request)
 
     diagramas_voronoi = DiagramaVoronoi(d_almacenes)
-    #print(d_almacenes)
+    regiones = diagramas_voronoi.regiones()
+    PolygonLayer.objects.all().delete()
+    for v in regiones:
+        pol = PolygonLayer()
+        pol.geom = v
+        pol.save()
+    #ser = GeoJSONSerializer().serialize('geojson', PolygonLayer.objects.all()[0], geometry_field='Polygon')
+
+    ser = GeoJSONSerializer().serialize(PolygonLayer.objects.all(), use_natural_keys=False, with_modelname=False)
+
     rutas = []
     for alm in diagramas_voronoi.region_pts.keys():
         tiendas_por_region = diagramas_voronoi.puntos_por_region(d_tiendas, alm)
         ruta = [tiendas_por_region[0].replace(", ", "@")]
         ruta += [tiendas_por_region[i].replace(", ", "@") for i in range(1, len(tiendas_por_region))]
         rutas.append('()'.join(ruta))
-    
-    print(rutas)
 
+    almacenes_list = Markers(Bodega.objects.all())
+    tiendas_list = Markers(Tienda.objects.all())
     context = {
         'rutas_list': rutas,
         "google_api_key": settings.GOOGLE_API_KEY,
+        "ser": ser,
+        "tiendas_list": tiendas_list,
+        "almacenes_list": almacenes_list
     }
     return render(request, "app/resultado.html", context)
 

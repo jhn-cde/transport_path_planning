@@ -5,6 +5,7 @@ from shapely.ops import cascaded_union
 from geovoronoi import voronoi_regions_from_coords, points_to_coords
 from shapely.geometry import Point
 import fiona
+from shapely.geometry import shape
 import random
 
 class DiagramaVoronoi():
@@ -26,8 +27,6 @@ class DiagramaVoronoi():
 
     # calcular las regiones de voronoi
     self.region_polys, self.region_pts = voronoi_regions_from_coords(self.coords, self.distritos_shape)
-
-    self.guardar_regiones()
 
   def obtener_coords(self, puntos):
     # Preparar puntos
@@ -59,7 +58,7 @@ class DiagramaVoronoi():
     distritos_shape = cascaded_union(self.distritos_cusco.geometry)
     return distritos_shape
 
-  def guardar_regiones(self):
+  def regiones(self):
     # praparar shapes
     # convertir a diccionario
     mi_d = dict()
@@ -79,7 +78,23 @@ class DiagramaVoronoi():
     gdf = gdf.to_crs(epsg=4326)
     gdf['colour'] = colores
     # guardar
+    d = pd.DataFrame(gdf).to_dict()["geometry"]
+    coords = []
+    for k,v in d.items():
+      x,y = v.exterior.coords.xy
+      c = []
+      for i in range(len(x)):
+        c += [[x[i],y[i]]]
+
+      d_ans = {
+        "type": "Polygon",
+        "coordinates": [c]
+      }
+      coords += [d_ans]
+    return(coords)
+
     gdf.to_file('app/static/regiones.geojson', driver='GeoJSON')
+
 
   def puntos_por_region(self, puntos, region):
     regiones = list(self.puntos.keys())
@@ -104,9 +119,7 @@ def test():
       'alm6': [-71.887626,-13.546890]
   }
   voro = DiagramaVoronoi(almacenes)
-  for k in voro.region_pts.keys():
-    puntos_por_region = voro.puntos_por_region(almacenes, k)
-    #print(puntos_por_region)
+  print(voro.regiones())
 
 if __name__ == "__main__":
   test()
