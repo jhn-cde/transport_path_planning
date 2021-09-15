@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.conf import settings
 from numpy import add
+from numpy.lib.shape_base import split
 from .models import Bodega, Tienda, PolygonLayer, Address
 from urllib.parse import urlencode
 from .mixins import Directions, Markers
@@ -21,11 +22,8 @@ def tiendas(request):
     if request.method == 'POST':
         address = request.POST['google_address']
         latlng = getlatlng(address, settings.GOOGLE_API_KEY)
-        miAlamacen = Tienda()
-        miAlamacen.address = address
-        miAlamacen.lat = latlng['lat']
-        miAlamacen.lng = latlng['lng']
-        miAlamacen.save()
+        miTienda = Tienda()
+        guardarObjeto(miTienda, latlng)
         return redirect('./')
     
     # obtener direcciones
@@ -35,17 +33,18 @@ def tiendas(request):
         "google_api_key": settings.GOOGLE_API_KEY,
     }
     return render(request, 'app/tiendas.html', context)
-    
-def bodegas(request):
+
+def deltiendas(request):
+    Tienda.objects.all().delete()
+    return tiendas(request)
+
+def almacenes(request):
     # verificar si formulario fue completado
     if request.method == 'POST':
         address = request.POST['google_address']
         latlng = getlatlng(address, settings.GOOGLE_API_KEY)
         miAlamacen = Bodega()
-        miAlamacen.address = address
-        miAlamacen.lat = latlng['lat']
-        miAlamacen.lng = latlng['lng']
-        miAlamacen.save()
+        guardarObjeto(miAlamacen, latlng)
         return redirect('./')
     
     # obtener direcciones
@@ -54,14 +53,18 @@ def bodegas(request):
         'address_list': address_list,
         "google_api_key": settings.GOOGLE_API_KEY,
     }
-    return render(request, 'app/bodegas.html', context)
+    return render(request, 'app/almacenes.html', context)
+
+def delalmacenes(request):
+    Bodega.objects.all().delete()
+    return almacenes(request)
 
 def resultado(request):
     d_almacenes = dict()
     for bodega in Bodega.objects.all():
         d_almacenes[bodega.address] = [bodega.lng, bodega.lat]
     if(len(d_almacenes) < 3):
-        return bodegas(request)
+        return almacenes(request)
 
     d_tiendas = dict()
     for tienda in Tienda.objects.all():
@@ -100,18 +103,42 @@ def resultado(request):
 
 
 def getlatlng(address, GOOGLE_API_KEY):
-    data_type = 'json'
-    endpoint = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/{data_type}"
-    params = {"input":address.replace(', ', ',+'),
-        "inputtype":"textquery", "fields":"formatted_address,name,rating,opening_hours,geometry",
-        "key":GOOGLE_API_KEY}
-    url_params = urlencode(params)
+    tmp = address.split(",")
+    try:
+        lat = float(tmp[0])
+        lng = float(tmp[1])
+        ln = len(Bodega.objects.all())
+        return {"address": "Almacen " + str(ln),"lat":lat, "lng":lng}
+    except Exception:
+        try:
+            data_type = 'json'
+            endpoint = f"https://maps.googleapis.com/maps/api/place/findplacefromtext/{data_type}"
+            params = {"input":address.replace(', ', ',+'),
+                "inputtype":"textquery", "fields":"formatted_address,name,rating,opening_hours,geometry",
+                "key":GOOGLE_API_KEY}
+            url_params = urlencode(params)
 
-    url = f"{endpoint}?{url_params}"
+            url = f"{endpoint}?{url_params}"
 
-    payload={}
-    headers = {}
-    response = requests.request("GET", url, headers=headers, data=payload)
-    if response.status_code not in range(200, 299):
-        return {}
-    return(response.json()['candidates'][0]["geometry"]['location'])
+            payload={}
+            headers = {}
+            response = requests.request("GET", url, headers=headers, data=payload)
+            if response.status_code not in range(200, 299):
+                return {}
+            d = (response.json()['candidates'][0]["geometry"]['location'])
+            d['address'] = address
+            return d
+        except (Exception):
+            print("No se pudo obtener latlng", Exception)
+            return {}
+
+def guardarObjeto(objeto, latlng):
+    try:
+        objeto.address = latlng['address']
+        objeto.lat = latlng['lat']
+        objeto.lng = latlng['lng']
+        objeto.save()
+    except Exception:
+        print("No se pudo guardar el objeto", Exception)
+    
+    

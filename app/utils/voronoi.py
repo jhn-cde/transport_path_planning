@@ -5,6 +5,7 @@ from shapely.ops import cascaded_union
 from geovoronoi import voronoi_regions_from_coords, points_to_coords
 from shapely.geometry import Point
 import fiona
+import shapely
 from shapely.geometry import shape
 import random
 
@@ -81,6 +82,19 @@ class DiagramaVoronoi():
     d = pd.DataFrame(gdf).to_dict()["geometry"]
     coords = []
     for k,v in d.items():
+      if isinstance(v, shapely.geometry.multipolygon.MultiPolygon):
+        for polig in v:
+          x,y = polig.exterior.coords.xy
+          c = []
+          for i in range(len(x)):
+            c += [[x[i],y[i]]]
+
+          d_ans = {
+            "type": "Polygon",
+            "coordinates": [c]
+          }
+          coords += [d_ans]
+        continue
       x,y = v.exterior.coords.xy
       c = []
       for i in range(len(x)):
@@ -91,6 +105,7 @@ class DiagramaVoronoi():
         "coordinates": [c]
       }
       coords += [d_ans]
+      
     return(coords)
 
     gdf.to_file('app/static/regiones.geojson', driver='GeoJSON')
