@@ -76,7 +76,7 @@ class DiagramaVoronoi():
     gdf = gpd.GeoDataFrame(df, geometry = df.geometry)
     # crs
     gdf.crs = "EPSG:3395"
-
+    gdf = gdf.to_crs(epsg=4326)
     gdf['colour'] = colores
     # guardar
     gdf.to_file('app/static/regiones.geojson', driver='GeoJSON')
