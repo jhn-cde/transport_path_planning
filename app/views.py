@@ -3,7 +3,7 @@ from django.conf import settings
 from .models import Almacen, AlmacenPoint, Tienda, TiendaPoint, PolygonLayer
 from .mixins import getlatlng, guardarObjeto, getDictCoords
 from .utils.voronoi import DiagramaVoronoi
-from .utils.distanciaMinima import MinDistancia
+from .utils.DistanciaMinima import MinDistancia
 import json
 from djgeojson.serializers import Serializer as GeoJSONSerializer
 
