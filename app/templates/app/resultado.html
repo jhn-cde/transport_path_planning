@@ -1,5 +1,4 @@
 {% extends 'app/base.html' %}
-{% load crispy_forms_tags %}
 {% load static %}
 
 
@@ -36,12 +35,12 @@
 
 {% block extend_footer %}
     <script type="text/javascript">
+        // variables serializadas
         var google_api_key = "{{google_api_key|safe}}";
-        var rutas_list = "{{rutas_list|safe}}"
         var ser = "{{ ser|escapejs }}";
-        var almacenes_list = "{{almacenes_list|safe}}"
-        var tiendas_list = "{{tiendas_list|safe}}"
-
+        var almSer = "{{ almSer|escapejs }}";
+        var tieSer = "{{ tieSer|escapejs }}";
+        var rutasSer = "{{ rutasSer|escapejs }}";
     </script>
-    <script src="{% static 'google_maps.js' %}"></script>
+    <script src="{% static 'google_maps_resultados.js' %}"></script>
 {% endblock %}

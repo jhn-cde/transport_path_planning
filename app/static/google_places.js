@@ -1,14 +1,17 @@
+// Variables
 let map;
 let markers = [];
-let agregar = [];
+let autocomplete;
+// variables json
+pointgjson = data = JSON.parse(pointsSer);
+
 $.getScript( "https://maps.googleapis.com/maps/api/js?key=" + google_api_key + "&libraries=places") 
 .done(function( script, textStatus ) {
     google.maps.event.addDomListener(window, "load", initAutocomplete())
     google.maps.event.addDomListener(window, "load", initMap)
 })
 
-let autocomplete;
-
+// iniciar autocompletado - sugerencias de busqueda
 function initAutocomplete() {
 
   autocomplete = new google.maps.places.Autocomplete(
@@ -20,73 +23,57 @@ function initAutocomplete() {
 }
 
 function initMap() {
+  // Crear mapa
   map = new google.maps.Map(document.getElementById('map-markers'), {
       zoom: 13,
       center: { lat: -13.5279763, lng: -71.9406047 }
   });
-  // This event listener will call addMarker() when the map is clicked.
+
+  // Este Listener llama a addMaker cuando el mapa es clickeado
   map.addListener("click", (event) => {
-    deleteMarkers(agregar)
+    // Esto permite añadir solo un marcador a la vez
+    deleteMarkers()
+    // añade marcador al mapa
     title = event.latLng.toJSON()["lat"] + "," + event.latLng.toJSON()["lng"]
     addMarker(event.latLng, title, true, true);
     document.getElementById('id-google-address').value = title
   });
 
-  addKnownMarkers()
+  // carga los puntos guardados anteriormente
+  cargarGJSON(map, pointgjson)
 
+  // define la altura del mapa
   document.getElementById('map-markers').style.height = "80vh";
 }
 
-function addKnownMarkers()
+// cargar geojson en el mapa
+function cargarGJSON(map, gjson)
 {
-  address_list = address_list.replace('[', '')
-  address_list = address_list.replace(']', '')
-  address_list = address_list.replace(/'/g, "")
-
-  for (let address of address_list.split(", ")){
-    address_info = address.split('()')
-    address_info[0] = address_info[0].replace(/@/g, ', ')
-
-    position =  {lat:parseFloat(address_info[1]), lng:parseFloat(address_info[2])}
-    title = address_info[0]
-
-    addMarker(position, title)
+  try{
+    map.data.addGeoJson(gjson)
+  }catch (e){
+    console.log("no se pudo cargar gjson" + e)
   }
 }
 
-function addMarker(position, title = "", seticon = false, nuevo_marker = false) {
-
+// añadir marcador
+function addMarker(position, title = "") {
+  // crear maker
   const marker = new google.maps.Marker({
     position: position,
     map: map,
     title: title,
   });
-  if (seticon)
-  {
-    marker.setIcon("http://maps.google.com/mapfiles/kml/paddle/grn-blank.png")
-  }
-  if (nuevo_marker)
-  {
-    agregar.push(marker);
-  }
-  else{
-    markers.push(marker);
-  }
+  marker.setIcon("http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png")
+
+  // añadir maker a makers - esto permite ocultar, mostrar o eliminar los marcadores
+  markers.push(marker);
 }
 
-// Sets the map on all markers in the array.
-function setMapOnAll(map, markers_list) {
-  for (let i = 0; i < markers_list.length; i++) {
-    markers_list[i].setMap(map);
+// Elmina todos los marcadores de makers removiendo referencias
+function deleteMarkers() {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(null);
   }
-}
-// Removes the markers from the map, but keeps them in the array.
-function hideMarkers(markers_list) {
-  setMapOnAll(null, markers_list);
-}
-
-// Deletes all markers in the array by removing references to them.
-function deleteMarkers(markers_list) {
-  hideMarkers(markers_list);
-  markers_list = [];
+  markers = [];
 }
