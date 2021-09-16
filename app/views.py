@@ -6,7 +6,7 @@ import json
 from .models import Almacen, AlmacenPoint, Tienda, TiendaPoint, PolygonLayer
 from .mixins import getlatlng, guardarObjeto, getDictCoords
 from .utils.voronoi import DiagramaVoronoi
-from .utils.distanciaMinima import MinDistancia
+from .utils.DistanciaMinima import MinDistancia
 
 # views
 def index(request):
