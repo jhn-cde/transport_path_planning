@@ -1,5 +1,4 @@
 {% extends 'app/base.html' %}
-{% load crispy_forms_tags %}
 {% load static %}
 
 
@@ -17,7 +16,7 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
             </ul>
-            <form class="form-inline" action="{% url 'app:bodegas' %}" method="POST">
+            <form class="form-inline" action="{% url 'app:almacenes' %}" method="POST">
                 {% csrf_token %}
                 <div class="form-group">
                     <input type="text" placeholder="*Ingresa una dirección" class="form-control" id="id-google-address" name="google_address">
@@ -42,9 +41,9 @@
 
 {% block extend_footer %}
     <script type="text/javascript">
+        // variables serializadas
         var google_api_key = "{{google_api_key|safe}}";
-        var address_list = "{{address_list|safe}}"
-        var geojson = JSON.parse("{% static 'regiones.geojson' %}");
+        var pointsSer = "{{ almSer|escapejs }}";
     </script>
     <script src="{% static 'google_places.js' %}"></script>
 {% endblock %}

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.apps.AppConfig',
     'crispy_forms',
+    'djgeojson',
 ]
 
 MIDDLEWARE = [
@@ -130,3 +131,7 @@ STATIC_URL = '/static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 GOOGLE_API_KEY = getGAK()
+
+SERIALIZATION_MODULES = {
+    'geojson' : 'djgeojson.serializers'
+}

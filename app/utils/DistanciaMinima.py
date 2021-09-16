@@ -1,7 +1,8 @@
 from math import radians, cos, sin, asin, sqrt
 class MinDistancia:
-    def __init__(self, ListaCoordenadas):
-        self.ListaCor = ListaCoordenadas
+    def __init__(self, dict_ListaCoordenadas):
+        self.Nombre = dict_ListaCoordenadas['nombre']
+        self.ListaCor = dict_ListaCoordenadas['coordenadas']
 
     def DistanciaMin(self, Lista, Camino):
         MinDis = 100000
@@ -34,11 +35,11 @@ class MinDistancia:
                 if i == j:
                     continue
                 else:
-                    Dis[i][j] = haversine(self.ListaCor[i][0], self.ListaCor[i][1], self.ListaCor[j][0], self.ListaCor[j][1])
+                    Dis[i][j] = self.haversine(self.ListaCor[i][0], self.ListaCor[i][1], self.ListaCor[j][0], self.ListaCor[j][1])
         XD = 0
         Camino = [0]
         for i in range(n-1):
-            XD = DistanciaMin(Dis[XD], Camino)
+            XD = self.DistanciaMin(Dis[XD], Camino)
             Camino.append(XD)
         
         ListRuta = []
@@ -47,4 +48,23 @@ class MinDistancia:
             Lista.append(self.ListaCor[i][0])
             Lista.append(self.ListaCor[i][1])
             ListRuta.append(Lista)
-        return(ListRuta)
+        
+        return {'nombre': self.Nombre, 'coordenadas': ListRuta}
+
+def test():
+    d_region = {
+        'nombre': "Almacen 1",
+        'coordenadas':[
+            [-71.887626,-13.546890],
+            [-71.993247,-13.525835],
+            [-71.968925,-13.517197],
+            [-71.966753,-13.531635],
+            [-71.939824,-13.527277],
+            [-71.915907,-13.531228],
+        ]
+    }
+    mindist = MinDistancia(d_region)
+    print(mindist.CaminoMinimo())
+
+if __name__ == "__main__":
+    test()
