@@ -4,7 +4,7 @@ var select = document.getElementById("selectRuta");
 var map = null
 let directionsService = null
 let directionsRenderer = null
-var center = { lat: -13.5279763, lng: -71.9406047 }
+var center = {lat: -13.5279763, lng: -71.9406047}
 
 // parse variables serializadas a json
 gjson = JSON.parse(ser);
@@ -39,17 +39,15 @@ function initMap() {
   document.getElementById('map-markers').style.height = "80vh"
 }
 // carga geojson
-function cargarGJSON(map, gjson)
-{
-  try{
+function cargarGJSON(map, gjson) {
+  try {
     map.data.addGeoJson(gjson)
-  }catch (e){
+  }catch (e) {
     console.log("no se pudo cargar gjson" + e)
   }
 }
 // cargar regiones de voronoi
-function cargarRegiones()
-{
+function cargarRegiones() {
   // cargar almacenes
   cargarGJSON(map, almgjson)
 
@@ -73,12 +71,11 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
 
   let index = parseInt(select.value, 10)
   const waypts = [];
-  if(index == 0)
-  {
+  if(index == 0) {
     // mostrar almacenes y aumentar sombreado
     cargarRegiones()
   }
-  else{
+  else {
     // limpiar marcadores
     deleteFeatures("markermodel", "Almacen")
 
@@ -115,8 +112,7 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
   }
 }
 // Agregar opciones en select
-function cargarOpciones()
-{
+function cargarOpciones() {
   // primera opcion - regiones de voronoi
   var el = document.createElement("option")
   el.textContent = "Regiones de Voronoi"
@@ -124,8 +120,7 @@ function cargarOpciones()
   select.appendChild(el)
   let i = 0
   // otras opciones - rutas
-  for (var [k, v] of Object.entries(rutasjson))
-  {
+  for (var [k, v] of Object.entries(rutasjson)) {
     rutas.push(v);
     var el = document.createElement("option")
     el.textContent = k
@@ -136,7 +131,7 @@ function cargarOpciones()
 }
 
 // elemina features de map (marjkadores)
-function deleteFeatures(property, value){
+function deleteFeatures(property, value) {
   map.data.forEach(function (feature) {
     if (feature.getProperty(property) == value) {
         map.data.remove(feature);

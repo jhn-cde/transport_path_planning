@@ -1,7 +1,8 @@
 import requests
 from urllib.parse import urlencode
 
-# no views
+# funciones útiles
+# obtener latlng de la API de google
 def getlatlng(address, GOOGLE_API_KEY):
     # verificar si se tienen latlng
     tmp = address.split(",")

@@ -13,10 +13,8 @@ $.getScript( "https://maps.googleapis.com/maps/api/js?key=" + google_api_key + "
 
 // iniciar autocompletado - sugerencias de busqueda
 function initAutocomplete() {
-
   autocomplete = new google.maps.places.Autocomplete(
-    document.getElementById('id-google-address'),
-    {
+    document.getElementById('id-google-address'), {
       types: ['address'],
       componentRestrictions: {'country': ['pe']},
   })
@@ -47,8 +45,7 @@ function initMap() {
 }
 
 // cargar geojson en el mapa
-function cargarGJSON(map, gjson)
-{
+function cargarGJSON(map, gjson) {
   try{
     map.data.addGeoJson(gjson)
   }catch (e){
