@@ -31,7 +31,7 @@ h1{
     font-size: 44px;
 }
 
-.icon-bar a:hover {
+.icon-bar a:hover, .seleccionado {
     background-color: #680D0F;
 }
 
