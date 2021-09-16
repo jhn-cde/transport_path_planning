@@ -1,9 +1,7 @@
+from django.http import request
 from django.shortcuts import render, redirect
 from django.conf import settings
-from djgeojson.serializers import Serializer as GeoJSONSerializer
-import json
-
-from .models import Almacen, AlmacenPoint, Tienda, TiendaPoint, PolygonLayer
+from .models import AlmacenPoint, TiendaPoint, PolygonLayer
 from .mixins import getlatlng, guardarObjeto, getDictCoords
 from .utils.voronoi import DiagramaVoronoi
 from .utils.DistanciaMinima import MinDistancia
@@ -20,7 +18,7 @@ def tiendas(request):
         latlng = getlatlng(address, settings.GOOGLE_API_KEY)
         # añadir nombre
         if (latlng["address"] == ""):
-            latlng["address"] = "Tienda " + str(len(Tienda.objects.all()))
+            latlng["address"] = "Tienda " + str(len(TiendaPoint.objects.all()))
         # guardar punto            
         tiendaPunto = TiendaPoint()
         guardarObjeto(tiendaPunto, latlng, "Tienda")
@@ -37,7 +35,7 @@ def tiendas(request):
     return render(request, 'app/tiendas.html', context)
 
 def deltiendas(request):
-    Tienda.objects.all().delete()
+    TiendaPoint.objects.all().delete()
     return tiendas(request)
 
 def almacenes(request):
@@ -48,7 +46,7 @@ def almacenes(request):
         latlng = getlatlng(address, settings.GOOGLE_API_KEY)
         # añadir nombre
         if (latlng["address"] == ""):
-            latlng["address"] = "Almacen " + str(len(Almacen.objects.all()))
+            latlng["address"] = "Almacen " + str(len(AlmacenPoint.objects.all()))
         # guardar punto
         almacenPunto = AlmacenPoint()
         guardarObjeto(almacenPunto, latlng, "Almacen")
@@ -65,12 +63,14 @@ def almacenes(request):
     return render(request, 'app/almacenes.html', context)
 
 def delalmacenes(request):
-    Almacen.objects.all().delete()
+    AlmacenPoint.objects.all().delete()
     return almacenes(request)
 
 def resultado(request):
+    # Eliminar poligonos anteriores
+    PolygonLayer.objects.all().delete()
+
     # obtener modelos serializados
-    ser = GeoJSONSerializer().serialize(PolygonLayer.objects.all(), use_natural_keys=False, with_modelname=False)
     almSer = GeoJSONSerializer().serialize(AlmacenPoint.objects.all(), use_natural_keys=False, with_modelname=False)
     tieSer = GeoJSONSerializer().serialize(TiendaPoint.objects.all(), use_natural_keys=False, with_modelname=False)
 
@@ -83,9 +83,6 @@ def resultado(request):
     diagramas_voronoi = DiagramaVoronoi(d_almSer)
     print("* Diagramas de Voronoi Generados")
 
-    # Eliminar poligonos anteriores
-    PolygonLayer.objects.all().delete()
-
     # generar nuevos poligonos
     print("\n* Generando poligonos - regiones")
     regiones = diagramas_voronoi.regiones()
@@ -94,6 +91,9 @@ def resultado(request):
         pol.geom = v
         pol.save()
     print("* Poligonos generados")
+
+    # obtener poligonos serializados
+    ser = GeoJSONSerializer().serialize(PolygonLayer.objects.all(), use_natural_keys=False, with_modelname=False)
 
     print("\n* Generando rutas optimas")
     # Generar rutas
@@ -127,3 +127,9 @@ def resultado(request):
         "rutasSer": rutasSer
     }
     return render(request, "app/resultado.html", context)
+
+def delresultado(request):
+    TiendaPoint.objects.all().delete()
+    AlmacenPoint.objects.all().delete()
+    PolygonLayer.objects.all().delete()
+    return almacenes(request)

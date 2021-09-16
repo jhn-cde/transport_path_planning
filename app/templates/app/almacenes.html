@@ -41,6 +41,13 @@
 
 {% block extend_footer %}
     <script type="text/javascript">
+        // resaltar boton
+        var boton = document.getElementById("aAlmacen")
+        boton.classList.add("seleccionado")
+
+        // Boton borrar
+        document.getElementById("aBasurero").setAttribute("href", "{% url 'app:delalmacenes' %}")
+
         // variables serializadas
         var google_api_key = "{{google_api_key|safe}}";
         var pointsSer = "{{ almSer|escapejs }}";
