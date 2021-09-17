@@ -43,7 +43,7 @@ function initMap() {
   cargarGJSON(map, pointgjson)
 
   // define la altura del mapa
-  document.getElementById('map-markers').style.height = "80vh";
+  document.getElementById('map-markers').style.height = "85vh";
 }
 
 // cargar geojson en el mapa

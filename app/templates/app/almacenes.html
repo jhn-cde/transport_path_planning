@@ -13,15 +13,15 @@
         <div class="col col_titulo">
             <h1 class="">Almacenes</h1>
         </div>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-            </ul>
-            <form class="form-inline" action="{% url 'app:almacenes' %}" method="POST">
+        <div class="col-auto">
+            <form class="row" action="{% url 'app:almacenes' %}" method="POST">
                 {% csrf_token %}
-                <div class="form-group">
+                <div class="col form-group">
                     <input type="text" placeholder="*Ingresa una dirección" class="form-control" id="id-google-address" name="google_address">
                 </div>
-                <button class="btn btn-outline-primary my-2 my-sm-0 mx-3" type="submit"> Añadir </button>
+                <div class="col">
+                    <button class="btn btn-outline-primary my-2 my-sm-0 mx-3" type="submit"> Añadir </button>
+                </div>
             </form>
         </div>
     </nav>

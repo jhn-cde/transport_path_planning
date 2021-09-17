@@ -1,4 +1,5 @@
 // Variables
+var markers = []
 var rutas = []
 var select = document.getElementById("selectRuta"); 
 var map = null
@@ -28,6 +29,7 @@ function initMap() {
   directionsRenderer = new google.maps.DirectionsRenderer();
 
   // cargar almacenes y regiones
+  cargarAlmacenes()
   cargarRegiones()
 
   // evento cambio de opcion select
@@ -38,21 +40,53 @@ function initMap() {
   // estilos: haltura 80vh
   document.getElementById('map-markers').style.height = "80vh"
 }
-// carga geojson
-function cargarGJSON(map, gjson)
+
+// Agregar opciones en select
+function cargarOpciones()
 {
-  try{
-    map.data.addGeoJson(gjson)
-  }catch (e){
-    console.log("no se pudo cargar gjson" + e)
+  // primera opcion - regiones de voronoi
+  var el = document.createElement("option")
+  el.textContent = "Regiones de Voronoi"
+  el.value = 0
+  select.appendChild(el)
+  let i = 0
+  // otras opciones - rutas
+  for (var [k, v] of Object.entries(rutasjson))
+  {
+    rutas.push(v);
+    var el = document.createElement("option")
+    el.textContent = k
+    el.value = i+1
+    select.appendChild(el)
+    i++
   }
 }
+
+// cargar almacenes
+function cargarAlmacenes()
+{
+  cargarGJSON(map, almgjson)
+  try{
+    map.data.forEach(function (feature) {
+      if (feature.getProperty("markermodel") == "Almacen") {
+        LatLng = feature.getGeometry().get();
+        var marker = new google.maps.Marker({
+             position: LatLng,
+             map: map,
+             title: feature.getProperty("name")
+        });
+        markers.push(marker);
+        map.data.remove(feature);
+      }
+    });
+  }catch (e){
+    console.log("no se pudo agregar titulo almacen" + e)
+  }
+}
+
 // cargar regiones de voronoi
 function cargarRegiones()
 {
-  // cargar almacenes
-  cargarGJSON(map, almgjson)
-
   // limpiar rutas
   directionsRenderer.setMap(null);
 
@@ -77,11 +111,9 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
   {
     // mostrar almacenes y aumentar sombreado
     cargarRegiones()
+    showMarkers()
   }
   else{
-    // limpiar marcadores
-    deleteFeatures("markermodel", "Almacen")
-
     // quitar sombreado
     map.data.setStyle({  
       fillColor: "#FFFFFF"
@@ -112,34 +144,40 @@ function calculateAndDisplayRoute(directionsService, directionsRenderer) {
         const route = response.routes[0];
       })
       .catch((e) => console.log("Solicitud de direccion falló debido a " + e));
-  }
-}
-// Agregar opciones en select
-function cargarOpciones()
-{
-  // primera opcion - regiones de voronoi
-  var el = document.createElement("option")
-  el.textContent = "Regiones de Voronoi"
-  el.value = 0
-  select.appendChild(el)
-  let i = 0
-  // otras opciones - rutas
-  for (var [k, v] of Object.entries(rutasjson))
-  {
-    rutas.push(v);
-    var el = document.createElement("option")
-    el.textContent = k
-    el.value = i+1
-    select.appendChild(el)
-    i++
+    
+    hideMarkers()
   }
 }
 
-// elemina features de map (marjkadores)
-function deleteFeatures(property, value){
-  map.data.forEach(function (feature) {
-    if (feature.getProperty(property) == value) {
-        map.data.remove(feature);
-    }
-  });
+// carga geojson
+function cargarGJSON(map, gjson)
+{
+  try{
+    map.data.addGeoJson(gjson)
+  }catch (e){
+    console.log("no se pudo cargar gjson" + e)
+  }
+}
+
+// asigna map a todos los markers
+function setMapOnAll(map) {
+  for (let i = 0; i < markers.length; i++) {
+    markers[i].setMap(map);
+  }
+}
+
+// Quita los markers del mapa pero no los borra
+function hideMarkers() {
+  setMapOnAll(null);
+}
+
+// Muestra los markers del array
+function showMarkers() {
+  setMapOnAll(map);
+}
+
+// Borra todos los markers del array
+function deleteMarkers() {
+  hideMarkers();
+  markers = [];
 }
