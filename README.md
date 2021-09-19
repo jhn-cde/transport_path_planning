@@ -10,6 +10,8 @@ conda install -c anaconda django
 pip install django
 ## geojson
 pip install django-geojson
+## shapely
+pip install shapely
 ## geopandas
 conda install geopandas
 ## goevoronoi
