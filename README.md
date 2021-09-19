@@ -12,6 +12,8 @@ pip install django
 pip install django-geojson
 ## shapely
 pip install shapely
+## fiona
+pip install fiona
 ## geopandas
 conda install geopandas
 ## goevoronoi
