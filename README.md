@@ -30,6 +30,10 @@ Desde tu linea de comandos:<br>
 git clone https://github.com/jhn-cde/transport_path_planning.git
 # Ingresa a la carpeta principal
 cd transport_path_planning
+# makemigrations
+python manage.py makemigrations
+# migrate
+python manage.py migrate
 # Corre el servidor
 python manage.py runserver
 # Dentro de un navegador ingresa a 
