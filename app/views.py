@@ -15,15 +15,19 @@ def index(request):
 def tiendas(request):
     # verificar si formulario fue completado
     if request.method == 'POST':
-        address = request.POST['google_address']
-        # obtener latlng
-        latlng = getlatlng(address, settings.GOOGLE_API_KEY)
-        # añadir nombre
-        if (latlng["address"] == ""):
-            latlng["address"] = "Tienda " + str(len(TiendaPoint.objects.all()))
-        # guardar punto            
-        tiendaPunto = TiendaPoint()
-        guardarObjeto(tiendaPunto, latlng, "Tienda")
+        nro_objetos = len(TiendaPoint.objects.all())
+        # Limitar el numero de tiendas a 500
+        if(nro_objetos < 500):
+            address = request.POST['google_address']
+            # obtener latlng
+            latlng = getlatlng(address, settings.GOOGLE_API_KEY)
+            # añadir nombre
+            if (latlng["address"] == ""):
+                latlng["address"] = "Tienda " + str(len(nro_objetos))
+            # guardar punto            
+            tiendaPunto = TiendaPoint()
+            guardarObjeto(tiendaPunto, latlng, "Tienda")
+        
         # volver a cargar página
         return redirect('./')
     
@@ -43,15 +47,18 @@ def deltiendas(request):
 def almacenes(request):
     # verificar si formulario fue completado
     if request.method == 'POST':
-        address = request.POST['google_address']
-        # obtener latlng
-        latlng = getlatlng(address, settings.GOOGLE_API_KEY)
-        # añadir nombre
-        if (latlng["address"] == ""):
-            latlng["address"] = "Almacen " + str(len(AlmacenPoint.objects.all()))
-        # guardar punto
-        almacenPunto = AlmacenPoint()
-        guardarObjeto(almacenPunto, latlng, "Almacen")
+        nro_objetos = AlmacenPoint.objects.all()
+        # Limitar el nro de alamcenes a 100
+        if (nro_objetos < 100):
+            address = request.POST['google_address']
+            # obtener latlng
+            latlng = getlatlng(address, settings.GOOGLE_API_KEY)
+            # añadir nombre
+            if (latlng["address"] == ""):
+                latlng["address"] = "Almacen " + str(nro_objetos)
+            # guardar punto
+            almacenPunto = AlmacenPoint()
+            guardarObjeto(almacenPunto, latlng, "Almacen")
         # volver a cargar página
         return redirect('./')
     

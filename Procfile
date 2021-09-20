@@ -1,0 +1,1 @@
+web: python manage.py collectstatic --no-input; gunicorn transport_path_planning.wsgi --log-file - --log-level debug
