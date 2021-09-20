@@ -1,23 +1,6 @@
 # transport_path_planning
 Planeamiento de rutas para el transporte de un sistema logístico
 
-# Librerias usadas
-```bash
-## django
-# django con conda (recomendado)
-conda install -c anaconda django
-# django con pip
-pip install django
-## geojson
-pip install django-geojson
-## fiona
-pip install fiona
-## geopandas
-conda install geopandas
-## goevoronoi
-pip install geovoronoi
-```
-
 # Como usar
 Para clonar y correr este repositorio necesitarás: Git, Python y Django<br>
 Es recomendable usar anaconda <br>
