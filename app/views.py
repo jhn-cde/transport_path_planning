@@ -23,7 +23,7 @@ def tiendas(request):
             latlng = getlatlng(address, settings.GOOGLE_API_KEY)
             # añadir nombre
             if (latlng["address"] == ""):
-                latlng["address"] = "Tienda " + str(len(nro_objetos))
+                latlng["address"] = "Tienda " + str(nro_objetos)
             # guardar punto            
             tiendaPunto = TiendaPoint()
             guardarObjeto(tiendaPunto, latlng, "Tienda")
@@ -47,7 +47,7 @@ def deltiendas(request):
 def almacenes(request):
     # verificar si formulario fue completado
     if request.method == 'POST':
-        nro_objetos = AlmacenPoint.objects.all()
+        nro_objetos = len(AlmacenPoint.objects.all())
         # Limitar el nro de alamcenes a 100
         if (nro_objetos < 100):
             address = request.POST['google_address']
