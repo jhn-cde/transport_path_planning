@@ -20,3 +20,14 @@ python manage.py runserver
 # Dentro de un navegador ingresa a 
 # http://localhost:8000/app
 ```
+# Datos
+- Universidad Nacional de San Antonio Abad del Cusco
+- Ingeniería Informática y de Sistemas
+- Algoritmos Avanzados
+- Semestre 2021-I
+# Integrantes
+- Johan wilfredo Huaman Mendoza
+- David Soncco Cachura
+- Isac Anderson Usucachi Ano
+- Nelson Gonzales Huisa
+- Elvis Jorge Huaman Mendoza
